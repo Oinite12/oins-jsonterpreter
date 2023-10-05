@@ -1,4 +1,4 @@
-# [[https://oinite12.github.io/oins-jsonterpreter|Oinite's JSONterpreter]]
+# [https://oinite12.github.io/oins-jsonterpreter](Oinite's JSONterpreter)
 ![JSONterpreter logo](https://raw.githubusercontent.com/Oinite12/oins-jsonterpreter/main/JSONterpreter%20logo.png)
 
 This is a tool for viewing JSON files that contain forum thread information. The threads in question come from the old Fandom thread system, which has since been depreciated in favor of discussions.
