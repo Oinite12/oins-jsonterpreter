@@ -77,7 +77,11 @@ body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
     font-size: 0.85em;
+    text-decoration: none;
+    color: black;
+
     cursor: pointer;
+    user-select: none;
 
     align-self: flex-end;
     display: flex;
