@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Theme/default.css">
+    <link rel="stylesheet" href="mwparse.css">
 </head>
 <body>
     <div id="page_header">
-        <img src="JSONterpreter logo.png" id="page_header_logo">
+        <img src="Assets/JSONterpreter logo.png" id="page_header_logo">
         <div id="page_header_buttons">
             <label for="button_view_file" class="button">View file</label>
             <label for="button_change_theme" class="button" style="color:darkgray">Change theme</label>
-            <label for="button_github" class="button">Source code</label>
+            <a href="https://github.com/Oinite12/oins-jsonterpreter" class="button">Source code</a>
 
             <input type="file" id="button_view_file" style="display: none" accept=".json"/>
             <button id="button_change_theme" style="display: none"></button>
-            <button id="button_github" style="display: none" onclick="window.location.href='https://github.com/Oinite12/oins-jsonterpreter';"></button>
         </div>
     </div>
 
@@ -32,7 +32,7 @@
         <div id="thread_parent" data-comment-id="1">
             <div id="thread_parent_title">How to use this page</div>
             <div id="thread_parent_top">
-                <img src="JSONterpreter pfp.png" id="thread_parent_pfp">
+                <img src="Assets/JSONterpreter pfp.png" id="thread_parent_pfp">
                 <div id="thread_parent_poster">Oinite Ozenal</div>
                 <div id="thread_parent_kudos">
                     <span id="thread_parent_kudos_count">0</span>
@@ -60,7 +60,7 @@
     <template id="template_thread_comment">
         <div class="thread_comment" data-comment-id="2">
             <div class="thread_comment_top">
-                <img src="JSONterpreter pfp.png" class="thread_comment_pfp">
+                <img src="Assets/JSONterpreter pfp.png" class="thread_comment_pfp">
                 <div class="thread_comment_poster"></div>
                 <div class="thread_comment_kudos">
                     <span class="thread_comment_kudos_count"></span>
