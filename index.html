@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="page_header">
+        <img src="JSONterpreter logo.png" id="page_header_logo">
+        <div id="page_header_buttons">
+            <label for="button_view_file" class="button">View file</label>
+            <label for="button_change_theme" class="button" style="color:darkgray">Change theme</label>
+            <label for="button_github" class="button">Source code</label>
+
+            <input type="file" id="button_view_file" style="display: none" accept=".json"/>
+            <button id="button_change_theme" style="display: none"></button>
+            <button id="button_github" style="display: none" onclick="window.location.href='https://github.com/Oinite12';"></button>
+        </div>
+    </div>
+
+    <div id="page_breadcrumbs" class="hide">
+        <span id="breadcrumb_wiki"></span>
+        <span> > </span>
+        <span id="breadcrumb_board"></span>
+        <span> > </span>
+        <span id="breadcrumb_thread"></span>
+    </div>
+
+    <div id="page_body">
+        <div id="thread_parent" data-comment-id="1">
+            <div id="thread_parent_title">How to use this page</div>
+            <div id="thread_parent_top">
+                <img src="JSONterpreter pfp.png" id="thread_parent_pfp">
+                <div id="thread_parent_poster">Oinite Ozenal</div>
+                <div id="thread_parent_kudos">
+                    <span id="thread_parent_kudos_count">0</span>
+                    <span> Kudos</span>
+                </div>
+                <select id="thread_parent_revisions">
+                    <option value="" disabled selected>-= Revisions</option>
+                </select>
+            </div>
+            <div id="thread_parent_content">
+                <p>1. Directions here.</p>
+            </div>
+            <div id="thread_parent_bottom" class="hide">
+                <span id="thread_parent_time">00:00</span>
+                <span id="thread_parent_bottom_divide_1" class="mu"> || Edited by </span>
+                <span id="thread_parent_edited" class="mu"></span>
+                <span id="thread_parent_bottom_divide_2" class="mu"> on </span>
+                <span id="thread_parent_edit_time" class="mu"></span>
+            </div>
+        </div>
+
+        <!-- thread-comment -->
+    </div>
+
+    <template id="template_thread_comment">
+        <div class="thread_comment" data-comment-id="2">
+            <div class="thread_comment_top">
+                <img src="JSONterpreter pfp.png" class="thread_comment_pfp">
+                <div class="thread_comment_poster"></div>
+                <div class="thread_comment_kudos">
+                    <span class="thread_comment_kudos_count"></span>
+                    <span> Kudos</span>
+                </div>
+                <select class="thread_comment_revisions">
+                    <option value="" disabled selected>-= Revisions</option>
+                </select>
+            </div>
+            <div class="thread_comment_content"></div>
+            <div class="thread_comment_bottom hide">
+                <span class="thread_comment_time"></span>
+                <span class="thread_comment_bottom_divide_1 mu"> || Edited by </span>
+                <span class="thread_comment_edited mu"></span>
+                <span class="thread_comment_bottom_divide_2 mu"> on </span>
+                <span class="thread_comment_edit_time mu"></span>
+            </div>
+        </div>
+    </template>
+
+    <script src="load_json.js"></script>
+</body>
+</html>
