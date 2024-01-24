@@ -3,24 +3,51 @@ let thread_json = {} // Make thread JSON a global variable
 
 // Add event listener to "View file"
 button_view_file.addEventListener('change', handleSubmit)
-thread_parent_revisions.addEventListener('input', changeRevision)
+label_view_file.addEventListener('drop', dropSubmit)
+label_view_file.addEventListener('dragover', dragOverHandler)
+parent_revisions.addEventListener('input', changeRevision)
 
-/** 
- * Lifesaving JSON file loader:
- * https://gomakethings.com/how-to-upload-and-process-a-json-file-with-vanilla-js/
- * (I modified it here so that it would immediately do s**t upon upload)
-**/
-function handleSubmit(event) { // event.target is the button
-    event.preventDefault()
-    if (!event.target.value.length) return
+function dragOverHandler(event) {
+    console.log("File(s) in drop zone");
+    // Prevent default behavior (Prevent file from being opened)
+    event.preventDefault();
+}
 
-    var reader = new FileReader()
+    /*
+Lifesaving JSON file loader:
+https://gomakethings.com/how-to-upload-and-process-a-json-file-with-vanilla-js/
+(I modified it here so that it would immediately do s**t upon upload)
+    */
+function fileReader(file) {
+    let reader = new FileReader()
     reader.onload = (event) => {
-        object = event.target.result
+        let object = event.target.result
         thread_json = JSON.parse(object)
         compileThread(thread_json) // Thread compiler
     }
-    reader.readAsText(event.target.files[0])
+    reader.readAsText(file)
+}
+
+function handleSubmit(event) { // event.target is the button
+    event.preventDefault() // Do not open file like default
+    if (!event.target.value.length) return // If no files submitted when interface closed
+    fileReader(event.target.files[0])
+}
+
+function dropSubmit(event) {
+    event.preventDefault() // Do not open file like default
+
+    if (event.dataTransfer.items) { // If other items are present in dragging
+        fileList = [...event.dataTransfer.items]
+        for (let i = 0; i < fileList.length; i++) {
+            if (fileList[i].kind === "file") {
+                fileReader([...event.dataTransfer.files][i])
+                break // Only get first file
+            }
+        }
+    } else { 
+        fileReader([...event.dataTransfer.files][0]) // Only get first file
+    }
 }
 
 // Thread compiler, function only runs when file is submitted
@@ -34,7 +61,7 @@ function compileThread(object) {
     document.querySelector("#breadcrumb_thread").textContent = object.threadName
     
     // Remove old comments
-    let old_comments = page_body.querySelectorAll(".thread_comment")
+    let old_comments = page_body.querySelectorAll(".comment")
     if (old_comments.length > 0) {
         for (let com = 0; com < old_comments.length; com++) {
             old_comments[com].remove()
@@ -46,17 +73,17 @@ function compileThread(object) {
 
         if (i == 0) { // Parent comment
             // Remove old revision entries
-            let old_revisions = thread_parent_revisions.querySelectorAll(":not([disabled])")
+            let old_revisions = parent_revisions.querySelectorAll(":not([disabled])")
             if (old_revisions.length > 0) {
                 for (let com = 0; com < old_revisions.length; com++) {
                     old_revisions[com].remove()
                 }
             }
 
-            parentCreator(message)
+            postCreator(message, false)
             continue
         }
-        commentCreator(message, Number(i)+1)
+        postCreator(message, true, Number(i)+1)
     }
 }
 
@@ -65,7 +92,7 @@ function findUser(userlist, id) {
     if (!userlist.find(user => user.userid == id)) return {
         avatar: "",
         userid: 0,
-        username: "Missing username (for some reason???)"
+        username: ".." // Nothing found
     }
     return userlist.find(user => user.userid == id) // User IDs
 }
@@ -107,70 +134,77 @@ function addRevisionOption(select, revid, timeEdited) {
     select.add(revision_object)
 }
 
-function parentCreator(message) {
+function creatorInit(message) {
     let poster = findUser(thread_json.users, message.poster)
-
-    let homeless_revision = message.revisions.find(rev => !rev.text.toUpperCase().includes("HOUSEKEEP"))
-    if (homeless_revision == undefined) homeless_revision = revision[0]
-
-    let editor = findUser(thread_json.users, homeless_revision.editor)
-
-    thread_parent_poster.textContent = poster.username
-    thread_parent_kudos_count.textContent = message.kudos
-    thread_parent_time.textContent = readableDate(message.timePosted)
-
-    if (message.revisions.length > 1) {
-        thread_parent_bottom.classList.remove("hide")
-
-        thread_parent_edited.textContent = editor.username
-        thread_parent_edit_time.textContent = readableDate(homeless_revision.timeEdited)
-    } else {
-        thread_parent_bottom.classList.add("hide")
+    // If poster is missing due to name change, fall back to the first revisor of the post
+    if (poster.username == "..") {
+        poster = findUser(thread_json.users, message.revisions.at(-1).editor)
     }
-
-    thread_parent_title.textContent = homeless_revision.threadName
-    thread_parent_content.innerHTML = ""
-    thread_parent_content.insertAdjacentHTML('beforeend', homeless_revision.text.replace(/(&lt;ac_metadata.*&lt;\/ac_metadata&gt;)/gm,""))
-
-    if (homeless_revision.text != "Missing parent") for (let j in message.revisions) {
-        let revision = message.revisions[j]
-        addRevisionOption(thread_parent_revisions, revision.revid, revision.timeEdited)
-    }
-}
-
-function commentCreator(message, comment_id) {
-    let poster = findUser(thread_json.users, message.poster)
 
     let homeless_revision = message.revisions.find(rev => !rev.text.toUpperCase().includes("HOUSEKEEP"))
     if (homeless_revision == undefined) homeless_revision = revision[0]
     
     let editor = findUser(thread_json.users, homeless_revision.editor)
 
-    const comment = template_thread_comment.content.cloneNode(true)
+    return [poster, homeless_revision, editor]
+}
 
-    comment.querySelector(".thread_comment").dataset.commentId = comment_id
+function postCreator(message, isComment, comment_id) {
+    let q = +isComment // 0 or 1; 0 for thread, 1 for comment
+    let [poster, homeless_revision, editor] = creatorInit(message)
 
-    comment.querySelector(".thread_comment_poster").textContent = poster.username
-    comment.querySelector(".thread_comment_kudos_count").textContent = message.kudos
-    comment.querySelector(".thread_comment_time").textContent = readableDate(message.timePosted)
+    // parent assigned to comment just so I don't have to deal with undefined errors
+    let Co = isComment ? template_comment.content.cloneNode(true) : parent_contain
+    // Post part shorthand
+    let Post = {
+        poster:      [parent_poster     , Co.querySelector(".comment_poster")     ],
+        kudos_count: [parent_kudos_count, Co.querySelector(".comment_kudos_count")],
+        time:        [parent_time       , Co.querySelector(".comment_time")       ],
+        bottom:      [parent_bottom     , Co.querySelector(".comment_bottom")     ],
+        edited:      [parent_edited     , Co.querySelector(".comment_edited")     ],
+        edit_time:   [parent_edit_time  , Co.querySelector(".comment_edit_time")  ],
+        content:     [parent_content    , Co.querySelector(".comment_content")    ],
+        revisions:   [parent_revisions  , Co.querySelector(".comment_revisions")  ],
+    }
 
+    // Set username, kudos count, and timestamp
+    Post.poster[q].textContent = poster.username
+    Post.kudos_count[q].textContent = message.kudos
+    Post.time[q].textContent = readableDate(message.timePosted)
+    
+    // If multiple revisions, show who is the revisor of current revision
     if (message.revisions.length > 1) {
-        comment.querySelector(".thread_comment_bottom").classList.remove("hide")
-
-        comment.querySelector(".thread_comment_edited").textContent = editor.username
-        comment.querySelector(".thread_comment_edit_time").textContent = readableDate(homeless_revision.timeEdited)
+        Post.bottom[q].classList.remove("hide")
+        Post.edited[q].textContent = editor.username
+        Post.edit_time[q].textContent = readableDate(homeless_revision.timeEdited)
+    } else {
+        Post.bottom[q].classList.add("hide")
     }
-
-    comment.querySelector(".thread_comment_content").insertAdjacentHTML('beforeend', homeless_revision.text)
-
-    for (let j in message.revisions) {
+    
+    // Prepare parent title and empty content HTML
+    if (!isComment) {
+        parent_title.textContent = homeless_revision.threadName ? homeless_revision.threadName : "Missing parent"
+        // q == 0
+        Post.content[q].innerHTML = ""
+    }
+    // Regex primarily for parents
+    let ac_mtd_re = /(&lt;ac_metadata.*&lt;\/ac_metadata&gt;)/gm
+    // and THEN fill the content HTML
+    Post.content[q].insertAdjacentHTML('beforeend', homeless_revision.text.replace(ac_mtd_re,""))
+    
+    // First -if- primarily for parents - Prepare revisions
+    if (homeless_revision.text != "Missing parent") for (let j in message.revisions) {
         let revision = message.revisions[j]
-        addRevisionOption(comment.querySelector(".thread_comment_revisions"), revision.revid, revision.timeEdited)
+        addRevisionOption(Post.revisions[q], revision.revid, revision.timeEdited)
     }
-
-    comment.querySelector(".thread_comment_revisions").addEventListener('input', changeRevision)
-
-    page_body.appendChild(comment)
+    
+    // If comment, add ID, revision changer (parent already has it), and add comment to thread
+    if (isComment){
+        Co.querySelector(".comment").dataset.commentId = comment_id
+        // q == 1
+        Post.revisions[q].addEventListener('input', changeRevision)
+        page_body.appendChild(Co)
+    }
 }
 
 function changeRevision(event) {
@@ -181,14 +215,14 @@ function changeRevision(event) {
     let revision_id = event.target.value
 
     let revision = thread_json.messages[comment_id-1].revisions.find(rev => rev.revid == revision_id)
-    let comment_content = targcom.querySelector("#thread_parent_content, .thread_comment_content")
+    let comment_content = targcom.querySelector("#parent_content, .comment_content")
     comment_content.innerHTML = ""
     comment_content.insertAdjacentHTML('beforeend', revision.text.replace(/(&lt;ac_metadata.*&lt;\/ac_metadata&gt;)/gm,""))
 
     if (comment_id == 1) {
-        thread_parent_title.textContent = revision.threadName
+        parent_title.textContent = revision.threadName
     }
 
-    targcom.querySelector("#thread_parent_edited, .thread_comment_edited").textContent = findUser(thread_json.users, revision.editor).username
-    targcom.querySelector("#thread_parent_edit_time, .thread_comment_edit_time").textContent = readableDate(revision.timeEdited)
+    targcom.querySelector("#parent_edited, .comment_edited").textContent = findUser(thread_json.users, revision.editor).username
+    targcom.querySelector("#parent_edit_time, .comment_edit_time").textContent = readableDate(revision.timeEdited)
 }
