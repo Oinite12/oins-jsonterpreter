@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>JSONterpreter</title>
     <link rel="stylesheet" href="Theme/default.css">
     <link rel="stylesheet" href="mwparse.css">
 </head>
 <body>
     <div id="page_header">
-        <img src="JSONterpreter logo.png" id="page_header_logo">
+        <img src="Assets/JSONterpreter logo.png" id="page_header_logo">
         <div id="page_header_buttons">
-            <label for="button_view_file" class="button">View file</label>
+            <label id="label_view_file" for="button_view_file" class="button">View file</label>
             <label for="button_change_theme" class="button" style="color:darkgray">Change theme</label>
             <a href="https://github.com/Oinite12/oins-jsonterpreter" class="button">Source code</a>
 
@@ -29,54 +29,54 @@
     </div>
 
     <div id="page_body">
-        <div id="thread_parent" data-comment-id="1">
-            <div id="thread_parent_title">How to use this page</div>
-            <div id="thread_parent_top">
-                <img src="JSONterpreter pfp.png" id="thread_parent_pfp">
-                <div id="thread_parent_poster">Oinite Ozenal</div>
-                <div id="thread_parent_kudos">
-                    <span id="thread_parent_kudos_count">0</span>
+        <div id="parent_contain" data-comment-id="1">
+            <div id="parent_title">How to use this page</div>
+            <div id="parent_top">
+                <img src="Assets/JSONterpreter pfp.png" id="parent_pfp">
+                <div id="parent_poster">Oinite Ozenal</div>
+                <div id="parent_kudos">
+                    <span id="parent_kudos_count">0</span>
                     <span> Kudos</span>
                 </div>
-                <select id="thread_parent_revisions">
+                <select id="parent_revisions">
                     <option value="" disabled selected>-= Revisions</option>
                 </select>
             </div>
-            <div id="thread_parent_content">
+            <div id="parent_content">
                 <p>1. Directions here.</p>
             </div>
-            <div id="thread_parent_bottom" class="hide">
-                <span id="thread_parent_time">00:00</span>
-                <span id="thread_parent_bottom_divide_1" class="mu"> || Edited by </span>
-                <span id="thread_parent_edited" class="mu"></span>
-                <span id="thread_parent_bottom_divide_2" class="mu"> on </span>
-                <span id="thread_parent_edit_time" class="mu"></span>
+            <div id="parent_bottom" class="hide">
+                <span id="parent_time">00:00</span>
+                <span id="parent_bottom_divide_1" class="mu"> || Edited by </span>
+                <span id="parent_edited" class="mu"></span>
+                <span id="parent_bottom_divide_2" class="mu"> on </span>
+                <span id="parent_edit_time" class="mu"></span>
             </div>
         </div>
 
-        <!-- thread-comment -->
+        <!-- comment -->
     </div>
 
-    <template id="template_thread_comment">
-        <div class="thread_comment" data-comment-id="2">
-            <div class="thread_comment_top">
-                <img src="JSONterpreter pfp.png" class="thread_comment_pfp">
-                <div class="thread_comment_poster"></div>
-                <div class="thread_comment_kudos">
-                    <span class="thread_comment_kudos_count"></span>
+    <template id="template_comment">
+        <div class="comment" data-comment-id="2">
+            <div class="comment_top">
+                <img src="Assets/JSONterpreter pfp.png" class="comment_pfp">
+                <div class="comment_poster"></div>
+                <div class="comment_kudos">
+                    <span class="comment_kudos_count"></span>
                     <span> Kudos</span>
                 </div>
-                <select class="thread_comment_revisions">
+                <select class="comment_revisions">
                     <option value="" disabled selected>-= Revisions</option>
                 </select>
             </div>
-            <div class="thread_comment_content"></div>
-            <div class="thread_comment_bottom hide">
-                <span class="thread_comment_time"></span>
-                <span class="thread_comment_bottom_divide_1 mu"> || Edited by </span>
-                <span class="thread_comment_edited mu"></span>
-                <span class="thread_comment_bottom_divide_2 mu"> on </span>
-                <span class="thread_comment_edit_time mu"></span>
+            <div class="comment_content"></div>
+            <div class="comment_bottom hide">
+                <span class="comment_time"></span>
+                <span class="comment_bottom_divide_1 mu"> || Edited by </span>
+                <span class="comment_edited mu"></span>
+                <span class="comment_bottom_divide_2 mu"> on </span>
+                <span class="comment_edit_time mu"></span>
             </div>
         </div>
     </template>
