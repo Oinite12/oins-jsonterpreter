@@ -1,4 +1,4 @@
-#page_breadcrumbs.hide *, #thread_parent_bottom.hide .mu, .thread_comment_bottom.hide .mu {
+#page_breadcrumbs.hide *, #parent_bottom.hide .mu, .comment_bottom.hide .mu {
     visibility: hidden
 }
 
@@ -98,7 +98,7 @@ body {
 
 /* ================== */
 
-#thread_parent {
+#parent_contain {
     margin-bottom: 1em;
 
     padding: 0.5em 1em 1em 1em;
@@ -112,7 +112,7 @@ body {
     flex-direction: column;
 }
 
-.thread_comment {
+.comment {
     border-top: 1px solid gray;
 
     padding: 1em 3em;
@@ -124,7 +124,7 @@ body {
     flex-direction: column;
 }
 
-#thread_parent_top, .thread_comment_top {
+#parent_top, .comment_top {
     margin-bottom: 0.5em;
 
     width: 100%;
@@ -133,7 +133,7 @@ body {
     flex-direction: row;
 }
 
-.thread_comment_top {
+.comment_top {
     border: 0.75em solid darkgray;
 
     background: darkgray;
@@ -141,13 +141,13 @@ body {
     box-sizing: border-box;
 }
 
-#thread_parent_pfp, .thread_comment_pfp {
+#parent_pfp, .comment_pfp {
 
     width: 3em;
     height: 3em;
 }
 
-#thread_parent_poster, .thread_comment_poster {
+#parent_poster, .comment_poster {
     margin: auto 1em auto 0.5em;
 
     font-weight: bold;
@@ -155,13 +155,13 @@ body {
     align-self: flex-end;
 }
 
-#thread_parent_revisions, .thread_comment_revisions {
+#parent_revisions, .comment_revisions {
     margin: auto 1em auto auto;
 
     align-self: flex-end;
 }
 
-#thread_parent_kudos, .thread_comment_kudos {
+#parent_kudos, .comment_kudos {
     margin: auto 0;
 
     align-self: flex-end;
@@ -169,26 +169,26 @@ body {
     text-align: center;
 }
 
-#thread_parent_revisions, .thread_comment_revisions {
+#parent_revisions, .comment_revisions {
     font-family: Verdana, Geneva, Tahoma, sans-serif
 }
 
-#thread_parent_title {
+#parent_title {
     margin-bottom: 0.25em;
 
     font-weight: bold;
     font-size: 2em;
 }
 
-#thread_parent_content, .thread_comment_content {
+#parent_content, .comment_content {
     margin-bottom: 0.5em;
 }
 
-#thread_parent_content {
+#parent_content {
     border-top: 1px solid gray;
 }
 
-#thread_parent_bottom, .thread_comment_bottom {
+#parent_bottom, .comment_bottom {
     font-size: 0.75em;
     color: #444
 }
