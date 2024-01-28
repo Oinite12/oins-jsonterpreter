@@ -1,3 +1,77 @@
+#toc_container.on {
+    & > #show_toc {
+        right: 247px;
+    }
+    & > #toc {
+        right: 0px;
+    }
+}
+
+#show_toc {
+    border: 3px solid black;
+    border-right-color: gainsboro;
+    border-radius: 25px 0 0 25px;
+
+    position: fixed;
+    top: 25px;
+    right: 0px;
+
+    background-color: gainsboro;
+
+    width: 40px;
+    height: 75px;
+    z-index: 999;
+
+    transition: right 0.5s;
+
+    &:hover{
+        border-color: gray;
+        border-right-color: lightgray;
+        background-color: lightgray;
+    }
+}
+
+#toc {
+    border-left: 3px solid black;
+
+    position: fixed;
+    top: 0;
+    right: -250px;
+
+    background-color: gainsboro;
+
+    box-sizing: border-box;
+    width: 250px;
+    height: 100vh;
+    z-index: 990;
+    overflow-y: scroll;
+
+    transition: right 0.5s;
+
+    font-size: 13px;
+}
+
+#toc li > * {
+    &:first-child {
+        font-weight: bold;
+        color: linkText;
+        cursor: pointer;
+        &:hover {
+            text-decoration: underline linkText;
+        }
+        &:active {
+            color: activeText;
+            text-decoration: underline activeText;
+        }
+    }
+    &:last-child {
+        font-family: monospace;
+        font-style: italic;
+    }
+}
+
+/* ================== */
+
 #page_breadcrumbs.hide *, #parent_bottom.hide .mu, .comment_bottom.hide .mu {
     visibility: hidden
 }
@@ -123,6 +197,9 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+@keyframes Flash {from {background-color: orange}}
+.flash {animation: 1s linear 1 none Flash}
 
 #parent_top, .comment_top {
     margin-bottom: 0.5em;
