@@ -1,17 +1,30 @@
 // Initial variables
 let thread_json = {} // Make thread JSON a global variable
 
-// Add event listener to "View file"
+// Add event listeners
+show_toc.addEventListener('click', toggleTOC)
+toc.querySelector("span:first-child").addEventListener('click', jumpToPost)
 button_view_file.addEventListener('change', handleSubmit)
 label_view_file.addEventListener('drop', dropSubmit)
 label_view_file.addEventListener('dragover', dragOverHandler)
 parent_revisions.addEventListener('input', changeRevision)
 
-function dragOverHandler(event) {
-    console.log("File(s) in drop zone");
-    // Prevent default behavior (Prevent file from being opened)
-    event.preventDefault();
+function toggleTOC() {
+    toc_container.classList.toggle("on")
 }
+
+function jumpToPost(event) {
+    let jumped = document.querySelector(`[data-comment-id="${event.target.dataset["commentJump"]}"]`)
+    jumped.classList.remove("flash")
+    jumped.querySelector("#parent_top, .comment_top").scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    })
+    jumped.classList.add("flash")
+}
+
+// Prevent file from being opened in browser itself
+function dragOverHandler(event) {event.preventDefault() }
 
     /*
 Lifesaving JSON file loader:
@@ -62,11 +75,12 @@ function compileThread(object) {
     
     // Remove old comments
     let old_comments = page_body.querySelectorAll(".comment")
-    if (old_comments.length > 0) {
+    if (old_comments.length) {
         for (let com = 0; com < old_comments.length; com++) {
             old_comments[com].remove()
         }
     }
+    toc.querySelector("ol").innerHTML = ""
 
     for (let i in object.messages) {
         let message = object.messages[i]
@@ -81,6 +95,7 @@ function compileThread(object) {
             }
 
             postCreator(message, false)
+            document.title = "JSONterpreter | " + parent_title.textContent
             continue
         }
         postCreator(message, true, Number(i)+1)
@@ -135,17 +150,14 @@ function addRevisionOption(select, revid, timeEdited) {
 }
 
 function creatorInit(message) {
-    let poster = findUser(thread_json.users, message.poster)
     // If poster is missing due to name change, fall back to the first revisor of the post
-    if (poster.username == "..") {
-        poster = findUser(thread_json.users, message.revisions.at(-1).editor)
-    }
+    let poster = findUser(thread_json.users, message.poster)
+    if (poster.username == "..") poster = findUser(thread_json.users, message.revisions.at(-1).editor)
 
     let homeless_revision = message.revisions.find(rev => !rev.text.toUpperCase().includes("HOUSEKEEP"))
     if (homeless_revision == undefined) homeless_revision = revision[0]
     
     let editor = findUser(thread_json.users, homeless_revision.editor)
-
     return [poster, homeless_revision, editor]
 }
 
@@ -187,7 +199,7 @@ function postCreator(message, isComment, comment_id) {
         // q == 0
         Post.content[q].innerHTML = ""
     }
-    // Regex primarily for parents
+    // Regex primarily for parents - "AC_MeTaData REgex"
     let ac_mtd_re = /(&lt;ac_metadata.*&lt;\/ac_metadata&gt;)/gm
     // and THEN fill the content HTML
     Post.content[q].insertAdjacentHTML('beforeend', homeless_revision.text.replace(ac_mtd_re,""))
@@ -200,18 +212,35 @@ function postCreator(message, isComment, comment_id) {
     
     // If comment, add ID, revision changer (parent already has it), and add comment to thread
     if (isComment){
-        Co.querySelector(".comment").dataset.commentId = comment_id
+        Co.querySelector(".comment").dataset["commentId"] = comment_id
         // q == 1
         Post.revisions[q].addEventListener('input', changeRevision)
         page_body.appendChild(Co)
     }
+
+    addTOC(poster.username, Post.content[q].innerText, comment_id)
+}
+
+function addTOC(username, text, id) {
+    let toc_entry = template_toc.content.cloneNode(true)
+    let Entry = {
+        one: toc_entry.querySelector("span:first-child"),
+        two: toc_entry.querySelector("span:last-child")
+    }
+
+    Entry.one.innerText = username
+    Entry.two.innerText = text.replaceAll("\n", " ").substring(0,20) + (text.length > 20 ? "..." : "")
+    Entry.one.dataset['commentJump'] = id ? id : 1
+
+    Entry.one.addEventListener('click', jumpToPost)
+    toc.querySelector("ol").appendChild(toc_entry)
 }
 
 function changeRevision(event) {
     // targ-et com-ment
     let targcom = event.target.parentElement.parentElement
 
-    let comment_id = targcom.dataset.commentId
+    let comment_id = targcom.dataset["commentId"]
     let revision_id = event.target.value
 
     let revision = thread_json.messages[comment_id-1].revisions.find(rev => rev.revid == revision_id)
@@ -225,4 +254,5 @@ function changeRevision(event) {
 
     targcom.querySelector("#parent_edited, .comment_edited").textContent = findUser(thread_json.users, revision.editor).username
     targcom.querySelector("#parent_edit_time, .comment_edit_time").textContent = readableDate(revision.timeEdited)
+    document.title = "JSONterpreter | " + parent_title.textContent
 }
