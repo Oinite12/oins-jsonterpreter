@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="mwparse.css">
 </head>
 <body>
+    <div id="toc_container">
+        <button id="show_toc"></button>
+        <div id="toc"><ol>
+            <li><span data-comment-jump="1">Oinite Ozenal</span><br><span>1. Directions here.</span></li>
+        </ol></div>
+    </div>
+    
     <div id="page_header">
         <img src="Assets/JSONterpreter logo.png" id="page_header_logo">
         <div id="page_header_buttons">
@@ -54,8 +61,12 @@
             </div>
         </div>
 
-        <!-- comment -->
+        <!-- comments -->
     </div>
+
+    <template id="template_toc">
+        <li><span data-comment-jump="1"></span><br><span></span></li>
+    </template>
 
     <template id="template_comment">
         <div class="comment" data-comment-id="2">
